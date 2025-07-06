@@ -1,0 +1,86 @@
+
+datasource db {
+  provider = "postgresql" 
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+enum Role {
+  admin
+  technician
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  createdAt   DateTime  @default(now())
+  isOnline    Boolean   @default(false)
+
+  profile     Profile?
+  quotes      Quote[]
+
+  // One-to-one relation with Employee
+  employee    Employee? @relation(fields: [employeeId], references: [id])
+  employeeId  Int?      @unique
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+  firstname String
+  lastname String
+  city String
+  state String
+  zip String
+  userId   Int   @unique
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Guest {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  quotes    Quote[]
+}
+
+model Quote {
+  id                Int      @id @default(autoincrement())
+  userId            Int?     
+  guestId           Int?   
+  fullName          String
+  email             String
+  phone             String
+  address           String
+  zip               String
+  serviceType       String
+  preferredDate     DateTime?
+  additionalDetails String?
+  createdAt         DateTime @default(now())
+
+  user  User?  @relation(fields: [userId], references: [id])
+  guest Guest? @relation(fields: [guestId], references: [id])
+}
+
+model Employee {
+  id         Int      @id @default(autoincrement())
+  firstname  String
+  lastname   String
+  email      String   @unique
+  position   String
+  role       Role
+  phone      String?
+  startDate  DateTime
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Back reference to User
+  user       User?
+}
+
+
+
