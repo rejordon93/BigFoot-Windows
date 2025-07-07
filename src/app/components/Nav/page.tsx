@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { User, LogOut, Quote, Menu, X, LogIn } from "lucide-react";
+import { User, LogOut, Quote, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { useLogout } from "./components/Logout";
 
 const BigFootNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -10,14 +11,8 @@ const BigFootNavbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const getCookie = () => {
-    if (document.cookie) {
-      console.log("Cookies found:", document.cookie);
-    } else {
-      console.log("No cookies set.");
-    }
-  };
-  getCookie();
+  const { logout } = useLogout();
+
   return (
     <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 shadow-2xl border-b border-slate-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,14 +48,11 @@ const BigFootNavbar = () => {
           {/* Right side - Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             <button className="group flex items-center space-x-3 text-slate-300 hover:text-white transition-all duration-300 px-4 py-3 rounded-xl hover:bg-slate-700/50 backdrop-blur-sm border border-transparent hover:border-slate-600">
-              <LogIn className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <span className="font-semibold">
-                <Link href="/login">Login</Link>
-              </span>
-            </button>
-            <button className="group flex items-center space-x-3 text-slate-300 hover:text-white transition-all duration-300 px-4 py-3 rounded-xl hover:bg-slate-700/50 backdrop-blur-sm border border-transparent hover:border-slate-600">
               <Quote className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <span className="font-semibold">Quotes</span>
+              <span className="font-semibold">
+                {" "}
+                <a href="#quotes">Quotes</a>
+              </span>
             </button>
 
             <button className="group flex items-center space-x-3 text-slate-300 hover:text-white transition-all duration-300 px-4 py-3 rounded-xl hover:bg-slate-700/50 backdrop-blur-sm border border-transparent hover:border-slate-600">
@@ -71,8 +63,13 @@ const BigFootNavbar = () => {
             </button>
 
             <button className="group flex items-center space-x-3 text-slate-300 hover:text-red-400 transition-all duration-300 px-4 py-3 rounded-xl hover:bg-red-600/20 backdrop-blur-sm border border-transparent hover:border-red-500/50">
-              <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <span className="font-semibold">Logout</span>
+              <LogOut
+                onClick={logout}
+                className="w-5 h-5 group-hover:scale-110 transition-transform duration-300"
+              />
+              <span onClick={logout} className="font-semibold">
+                Logout
+              </span>
             </button>
           </div>
 
@@ -106,7 +103,10 @@ const BigFootNavbar = () => {
               </button>
 
               <button className="group flex items-center space-x-4 text-slate-300 hover:text-red-400 transition-all duration-300 px-4 py-4 rounded-xl hover:bg-red-600/20 w-full text-left border border-transparent hover:border-red-500/50">
-                <LogOut className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                <LogOut
+                  onClick={logout}
+                  className="w-6 h-6 group-hover:scale-110 transition-transform duration-300"
+                />
                 <span className="font-semibold text-lg">Logout</span>
               </button>
             </div>

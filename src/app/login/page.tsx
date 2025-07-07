@@ -1,7 +1,12 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { itemVariants } from "./components/LoginFuns";
+import { containerVariants } from "./components/LoginFuns";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -10,6 +15,8 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -17,37 +24,50 @@ export default function Login() {
     setMessage(null);
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setMessage("✅ Login successful! Redirecting...");
-      setIsLoading(false);
+    try {
+      await axios.post("/api/login", {
+        email,
+        password,
+      });
+
+      // Simulate delay and success message
       setTimeout(() => {
-        // router.push("/bigfootHome");
-        console.log("Redirecting to dashboard...");
-      }, 1500);
-    }, 2000);
+        setMessage("✅ Login successful! Redirecting...");
+        setIsLoading(false);
+        setTimeout(() => {
+          router.push("/");
+          console.log("Redirecting to dashboard...");
+        }, 1500);
+      }, 2000);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "Login failed. Please try again."
+        );
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
+      setIsLoading(false);
+    }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.2,
-      },
-    },
-  };
+  useEffect(() => {
+    const urlMessage = searchParams.get("message");
+    if (urlMessage) {
+      setMessage(urlMessage);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
+      // Auto-clear message after 5 seconds
+      const timer = setTimeout(() => {
+        setMessage("");
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  const clearMessage = () => setMessage("");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-blue-900 flex items-center justify-center px-4 py-12 relative overflow-hidden">
@@ -110,12 +130,18 @@ export default function Login() {
           {/* Success / Error Messages */}
           {message && (
             <motion.div
-              className="bg-green-500/20 border border-green-500/30 text-green-300 px-4 py-3 rounded-2xl mb-6 text-sm backdrop-blur-sm"
+              className="bg-green-500/20 border border-green-500/30 text-green-300 px-4 py-3 rounded-2xl mb-6 text-sm backdrop-blur-sm flex justify-between items-center"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {message}
+              <span>{message}</span>
+              <button
+                onClick={clearMessage}
+                className="ml-2 text-green-200 hover:text-green-100 transition-colors"
+              >
+                ×
+              </button>
             </motion.div>
           )}
           {error && (

@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.TOKEN_SECRET,
+
       { expiresIn: "1d" }
     );
 
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
       maxAge: 60 * 60 * 24,
       path: "/",
     });
+
     return response;
   } catch (error: unknown) {
     if (error instanceof Error) {

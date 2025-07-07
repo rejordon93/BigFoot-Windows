@@ -1,6 +1,7 @@
 "use client";
 import React, { FormEvent, useState } from "react";
 import { User, MapPin, Save, CheckCircle, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const [firstname, setFirstName] = useState("");
@@ -11,6 +12,7 @@ export default function Profile() {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,7 @@ export default function Profile() {
       setCity("");
       setState("");
       setZip("");
+      router.push("/");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError("Failed to save profile. Please try again.");

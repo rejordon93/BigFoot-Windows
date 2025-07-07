@@ -10,6 +10,8 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function SignUp() {
   const [username, setUsername] = useState<string>("");
@@ -19,6 +21,7 @@ export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +29,34 @@ export default function SignUp() {
     setError(null);
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setMessage("✅ Account created! Redirecting to login...");
-      setIsLoading(false);
+    try {
+      await axios.post("/api/signUp", {
+        username,
+        email,
+        password,
+      });
+
+      // Simulate delay and success message
       setTimeout(() => {
-        // router.push("/login");
-        console.log("Redirecting to login...");
-      }, 1500);
-    }, 2000);
+        setMessage("✅ Account created! Redirecting to login...");
+        setIsLoading(false);
+        setTimeout(() => {
+          router.push("/login");
+          console.log("Redirecting to login...");
+        }, 1500);
+      }, 2000);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "Sign up failed. Please try again."
+        );
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Sign up failed. Please try again.");
+      }
+      setIsLoading(false);
+    }
   };
 
   const containerVariants = {
