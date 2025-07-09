@@ -17,28 +17,28 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmial = email.toLowerCase();
 
-    const user = await prisma.user.findUnique({
+    const employee = await prisma.employee.findUnique({
       where: { email: normalizedEmial },
     });
 
-    if (!user) {
+    if (!employee) {
       return NextResponse.json(
         { error: "User does not exist" },
         { status: 400 }
       );
     }
     // set is onlint to true when login
-    await prisma.user.update({
+    await prisma.employee.update({
       where: {
         email,
       },
       data: {
-        isOnline: true,
+        role: "EMPLOYEE",
       },
     });
 
     // check if validPassword
-    const validPassword = await bcryptjs.compare(password, user.password);
+    const validPassword = await bcryptjs.compare(password, employee.password);
     if (!validPassword) {
       return NextResponse.json({ error: "Invalid password" }, { status: 400 });
     }
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     // if validPassword make a token!
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: employee.id, email: employee.email },
       process.env.TOKEN_SECRET,
 
       { expiresIn: "1d" }
@@ -57,9 +57,8 @@ export async function POST(req: NextRequest) {
     // send response!
     const response = NextResponse.json({
       message: "Login successful",
-      username: user.username,
-      email: user.email,
-      token,
+      username: employee.username,
+      email: employee.email,
     });
 
     // set token data

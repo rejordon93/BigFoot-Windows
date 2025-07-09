@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
       additionalDetails,
     }: QuoteType = body;
 
+    // Validate required fields
     if (
       !fullName ||
       !email ||
@@ -24,16 +25,33 @@ export async function POST(req: NextRequest) {
       !address ||
       !zip ||
       !serviceType ||
-      !preferredDate ||
-      !additionalDetails
+      !preferredDate
     ) {
       return NextResponse.json(
-        { message: "Missing Data from From" },
-        { status: 401 }
+        { message: "Missing data from form" },
+        { status: 400 }
       );
     }
 
-    const user = getToken(req);
+    const tokenData = await getToken(req);
+
+    let userId = null;
+    let guestId = null;
+
+    if (tokenData) {
+      userId = tokenData;
+    } else {
+      const existingGuest = await prisma.guest.findUnique({ where: { email } });
+
+      if (existingGuest) {
+        guestId = existingGuest.id;
+      } else {
+        const newGuest = await prisma.guest.create({
+          data: { email, name: fullName },
+        });
+        guestId = newGuest.id;
+      }
+    }
 
     const newQuote = await prisma.quote.create({
       data: {
@@ -43,11 +61,10 @@ export async function POST(req: NextRequest) {
         address,
         zip,
         serviceType,
-        preferredDate,
+        preferredDate: new Date(preferredDate),
         additionalDetails,
-        createdAt: new Date(),
-        userId: user ?? null,
-        guestId: user ? null : 1, // dummy guestId for now
+        userId,
+        guestId,
       },
     });
 

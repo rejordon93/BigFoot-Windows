@@ -12,7 +12,7 @@ const quoteSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   address: z.string().min(5, "Address must be at least 5 characters"),
   zip: z.string().min(5, "Zip code must be at least 5 characters"),
-  service: z.string().min(3, "Please specify the service you need"),
+  serviceType: z.string().min(3, "Please specify the service you need"),
   preferredDate: z.string().min(1, "Please select a preferred date"),
   additionalDetails: z.string().optional(),
 });
@@ -25,7 +25,7 @@ export default function BigFootHome() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [zip, setZip] = useState("");
-  const [service, setService] = useState("");
+  const [serviceType, setServiceType] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [errors, setErrors] = useState<Partial<QuoteFormData>>({});
@@ -41,7 +41,7 @@ export default function BigFootHome() {
       phone,
       address,
       zip,
-      service,
+      serviceType,
       preferredDate,
       additionalDetails,
     };
@@ -49,9 +49,8 @@ export default function BigFootHome() {
     try {
       // Validate form data with Zod
       const validatedData = quoteSchema.parse(formData);
-      await axios.post("/api/quote/create", {
-        validatedData,
-      });
+      await axios.post("/api/quote/create", validatedData);
+
       // Clear any previous errors
       setErrors({});
 
@@ -64,7 +63,7 @@ export default function BigFootHome() {
       setPhone("");
       setAddress("");
       setZip("");
-      setService("");
+      setServiceType("");
       setPreferredDate("");
       setAdditionalDetails("");
 
@@ -194,8 +193,8 @@ export default function BigFootHome() {
                 Service Needed
               </label>
               <select
-                value={service}
-                onChange={(e) => setService(e.target.value)}
+                value={serviceType}
+                onChange={(e) => setServiceType(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
               >
                 <option value="">Select a service</option>
@@ -205,8 +204,10 @@ export default function BigFootHome() {
                 <option value="pressure-washing">Pressure Washing</option>
                 <option value="other">Other</option>
               </select>
-              {errors.service && (
-                <p className="text-red-400 text-sm mt-1">{errors.service}</p>
+              {errors.serviceType && (
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.serviceType}
+                </p>
               )}
             </div>
 

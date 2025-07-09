@@ -7,6 +7,8 @@ import { itemVariants } from "./components/LoginFuns";
 import { containerVariants } from "./components/LoginFuns";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode"; // ✅ correct
+import { DecodedToken } from "@/type";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -25,18 +27,24 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await axios.post("/api/login", {
+      const res = await axios.post("/api/login", {
         email,
         password,
       });
+      const token = res.data.token; // ✅ Get token from response
+      const decoded = jwtDecode<DecodedToken>(token);
 
+      console.log(token);
       // Simulate delay and success message
       setTimeout(() => {
         setMessage("✅ Login successful! Redirecting...");
         setIsLoading(false);
         setTimeout(() => {
-          router.push("/");
-          console.log("Redirecting to dashboard...");
+          if (decoded.role === "EMPLOYEE" || decoded.role === "ADMIN") {
+            router.push("/employeeDashboard");
+          } else {
+            router.push("/");
+          }
         }, 1500);
       }, 2000);
     } catch (err: unknown) {
@@ -239,6 +247,19 @@ export default function Login() {
               whileHover={{ scale: 1.05 }}
             >
               Sign up
+            </motion.a>
+          </motion.p>
+          <motion.p
+            className="text-center text-white/70 mt-6 text-sm"
+            variants={itemVariants}
+          >
+            Employee?{" "}
+            <motion.a
+              href="/employeeSignUp"
+              className="text-cyan-300 hover:text-cyan-200 font-semibold transition-colors"
+              whileHover={{ scale: 1.05 }}
+            >
+              Employee login
             </motion.a>
           </motion.p>
 

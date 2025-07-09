@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { User, LogOut, Quote, Menu, X } from "lucide-react";
-import Link from "next/link";
 import { useLogout } from "./components/Logout";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const BigFootNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,6 +13,23 @@ const BigFootNavbar = () => {
   };
 
   const { logout } = useLogout();
+
+  const router = useRouter();
+
+  const checkIfProfileisThere = async () => {
+    try {
+      const res = await axios.get("/api/profile/get");
+
+      if (res.data.profileData) {
+        router.push("/dashboard");
+      } else {
+        router.push("/profile");
+      }
+    } catch (err) {
+      console.error("Error checking profile:", err);
+      router.push("/profile");
+    }
+  };
 
   return (
     <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 shadow-2xl border-b border-slate-600">
@@ -57,8 +75,8 @@ const BigFootNavbar = () => {
 
             <button className="group flex items-center space-x-3 text-slate-300 hover:text-white transition-all duration-300 px-4 py-3 rounded-xl hover:bg-slate-700/50 backdrop-blur-sm border border-transparent hover:border-slate-600">
               <User className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-              <span className="font-semibold">
-                <Link href="/profile">Profile</Link>
+              <span onClick={checkIfProfileisThere} className="font-semibold">
+                Profile
               </span>
             </button>
 

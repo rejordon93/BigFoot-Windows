@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('admin', 'technician');
+CREATE TYPE "Role" AS ENUM ('USER', 'EMPLOYEE', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "RecentActivity" AS ENUM ('completed', 'pending', 'revisit');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -9,6 +12,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "isOnline" BOOLEAN NOT NULL DEFAULT false,
+    "role" "Role" NOT NULL DEFAULT 'USER',
     "employeeId" INTEGER,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -22,9 +26,32 @@ CREATE TABLE "Profile" (
     "city" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "zip" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ProfileServices" (
+    "id" SERIAL NOT NULL,
+    "totalServices" INTEGER NOT NULL DEFAULT 0,
+    "rating" INTEGER NOT NULL DEFAULT 0,
+    "upcoming" INTEGER NOT NULL DEFAULT 0,
+    "status" TEXT NOT NULL DEFAULT 'Active',
+    "profileId" INTEGER NOT NULL,
+
+    CONSTRAINT "ProfileServices_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ProfileActivity" (
+    "id" SERIAL NOT NULL,
+    "services" TEXT NOT NULL,
+    "recentActivity" "RecentActivity" NOT NULL,
+    "profileId" INTEGER NOT NULL,
+
+    CONSTRAINT "ProfileActivity_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -95,6 +122,12 @@ ALTER TABLE "User" ADD CONSTRAINT "User_employeeId_fkey" FOREIGN KEY ("employeeI
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProfileServices" ADD CONSTRAINT "ProfileServices_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProfileActivity" ADD CONSTRAINT "ProfileActivity_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Quote" ADD CONSTRAINT "Quote_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

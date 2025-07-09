@@ -2,6 +2,7 @@
 import React, { FormEvent, useState } from "react";
 import { User, MapPin, Save, CheckCircle, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function Profile() {
   const [firstname, setFirstName] = useState("");
@@ -9,6 +10,7 @@ export default function Profile() {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
+  const [phone, setPhone] = useState("");
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -22,13 +24,21 @@ export default function Profile() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      await axios.post("/api/profile/create", {
+        firstname,
+        lastname,
+        city,
+        state,
+        zip,
+        phone,
+      });
       setSuccess("Profile saved successfully!");
       setFirstName("");
       setLastName("");
       setCity("");
       setState("");
       setZip("");
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError("Failed to save profile. Please try again.");
@@ -145,6 +155,22 @@ export default function Profile() {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Enter city"
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all duration-300 backdrop-blur-sm"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-slate-300 font-medium mb-2">
+                  Phone
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input
+                    type="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Enter phone"
                     className="w-full bg-slate-700/50 border border-slate-600 rounded-xl pl-11 pr-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all duration-300 backdrop-blur-sm"
                     required
                   />

@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const { firstname, lastname, state, city, zip }: ProfileData = body;
+    const { firstname, lastname, state, city, zip, phone }: ProfileData = body;
 
-    if (!firstname || !lastname || !state || !city || !zip) {
+    if (!firstname || !lastname || !state || !city || !zip || !phone) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
         state,
         city,
         zip,
+        phone,
         userId: id,
       },
     });

@@ -8,8 +8,14 @@ generator client {
   provider = "prisma-client-js"
 }
 enum Role {
-  admin
-  technician
+  USER
+  EMPLOYEE
+  ADMIN
+}
+enum RecentActivity {
+  completed
+  pending
+  revisit
 }
 
 model User {
@@ -19,25 +25,52 @@ model User {
   password    String
   createdAt   DateTime  @default(now())
   isOnline    Boolean   @default(false)
+  role      Role   @default(USER)
 
   profile     Profile?
   quotes      Quote[]
 
   // One-to-one relation with Employee
-  employee    Employee? @relation(fields: [employeeId], references: [id])
-  employeeId  Int?      @unique
+  // employee    Employee? @relation(fields: [employeeId], references: [id])
+  // employeeId  Int?      @unique
 }
 
 model Profile {
-  id Int @id @default(autoincrement())
+  id        Int                  @id @default(autoincrement())
   firstname String
-  lastname String
-  city String
-  state String
-  zip String
-  userId   Int   @unique
-  user User @relation(fields: [userId], references: [id])
+  lastname  String
+  city      String
+  state     String
+  zip       String
+  phone     String
+  userId    Int                  @unique
+  user      User                 @relation(fields: [userId], references: [id])
+
+  services  ProfileServices[]    // One-to-many relation
+  activities ProfileActivity[] // One-to-many relation
 }
+
+model ProfileServices {
+  id             Int      @id @default(autoincrement())
+  totalServices  Int      @default(0)
+  rating         Int      @default(0)
+  upcoming       Int      @default(0)
+  status         String   @default("Active")
+
+  profileId      Int
+  profile        Profile  @relation(fields: [profileId], references: [id])
+}
+
+model ProfileActivity {
+  id              Int            @id @default(autoincrement())
+  services        String
+  recentActivity  RecentActivity
+
+  profileId       Int
+  profile         Profile        @relation(fields: [profileId], references: [id])
+}
+
+
 
 model Guest {
   id        Int      @id @default(autoincrement())
@@ -64,23 +97,4 @@ model Quote {
   user  User?  @relation(fields: [userId], references: [id])
   guest Guest? @relation(fields: [guestId], references: [id])
 }
-
-model Employee {
-  id         Int      @id @default(autoincrement())
-  firstname  String
-  lastname   String
-  email      String   @unique
-  position   String
-  role       Role
-  phone      String?
-  startDate  DateTime
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Back reference to User
-  user       User?
-}
-
-
 
