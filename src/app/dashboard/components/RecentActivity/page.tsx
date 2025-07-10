@@ -6,66 +6,65 @@ import {
   CheckCircle2,
   AlertCircle,
 } from "lucide-react";
+import axios from "axios";
 
-type Activity = {
-  id: number;
+type Quote = {
+  serviceType: string;
+  preferredDate: string;
+  status: "completed" | "pending";
+};
+
+type ActivityItem = Quote & {
   action: string;
   date: string;
-  status: "completed" | "pending";
 };
 
 export default function RecentActivity() {
   const [sortType, setSortType] = useState("newest");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [quote, setQuote] = useState<Quote[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoaded(true);
+    const getQuoteData = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get("/api/quote/get");
+        setQuote(res.data);
+        console.log(res.data);
+      } catch (error) {
+        console.error("Failed to fetch quote data", error);
+      } finally {
+        setIsLoading(false);
+        setIsLoaded(true);
+      }
+    };
+    getQuoteData();
   }, []);
 
-  const recentActivity: Activity[] = [
-    {
-      id: 1,
-      action: "Window cleaning completed",
-      date: "2024-06-20",
-      status: "completed",
-    },
-    {
-      id: 2,
-      action: "Quote requested for 2-story home",
-      date: "2024-06-15",
-      status: "pending",
-    },
-    {
-      id: 3,
-      action: "Payment processed",
-      date: "2024-06-10",
-      status: "completed",
-    },
-    {
-      id: 4,
-      action: "Service scheduled",
-      date: "2024-06-01",
-      status: "completed",
-    },
-  ];
-
-  // Sorting logic
-  const sortedActivity = [...recentActivity].sort((a, b) => {
-    if (sortType === "newest") {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    } else if (sortType === "oldest") {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    } else if (sortType === "status") {
-      return a.status.localeCompare(b.status);
-    }
-    return 0;
-  });
+  const sortedActivity: ActivityItem[] = quote
+    .map((q) => ({
+      ...q,
+      action: `${q.serviceType} ${
+        q.status === "completed" ? "completed" : "requested"
+      }`,
+      date: q.preferredDate,
+    }))
+    .sort((a, b) => {
+      if (sortType === "newest") {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      } else if (sortType === "oldest") {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      } else if (sortType === "status") {
+        return a.status.localeCompare(b.status);
+      }
+      return 0;
+    });
 
   const sortOptions = [
     { value: "newest", label: "Newest First" },
     { value: "oldest", label: "Oldest First" },
-    { value: "status", label: "By Status" },
   ];
 
   const getActivityIcon = (status: string) => {
@@ -130,70 +129,96 @@ export default function RecentActivity() {
           </div>
         </div>
 
-        <div className="space-y-4">
-          {sortedActivity.map((activity, index) => {
-            const IconComponent = getActivityIcon(activity.status);
-
-            return (
+        {/* Loading State */}
+        {isLoading && (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
               <div
-                key={activity.id}
-                className={`group flex items-center space-x-4 p-6 bg-slate-700/30 backdrop-blur-sm rounded-2xl border border-slate-600/30 hover:border-slate-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 ${
-                  isLoaded
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 translate-x-4"
-                }`}
-                style={{
-                  animationDelay: `${index * 100}ms`,
-                  animation: isLoaded
-                    ? "slideInLeft 0.6s ease-out forwards"
-                    : "none",
-                }}
+                key={i}
+                className="flex items-center space-x-4 p-6 bg-slate-700/30 backdrop-blur-sm rounded-2xl border border-slate-600/30 animate-pulse"
               >
-                <div
-                  className={`p-3 rounded-xl transition-all duration-300 group-hover:scale-110 ${
-                    activity.status === "completed"
-                      ? "bg-green-500/20 group-hover:bg-green-500/30"
-                      : "bg-yellow-500/20 group-hover:bg-yellow-500/30"
-                  }`}
-                >
-                  <IconComponent
-                    className={`w-5 h-5 ${
-                      activity.status === "completed"
-                        ? "text-green-400"
-                        : "text-yellow-400"
-                    }`}
-                  />
+                <div className="p-3 bg-slate-600/50 rounded-xl">
+                  <div className="w-5 h-5 bg-slate-500 rounded"></div>
                 </div>
-
                 <div className="flex-1">
-                  <p className="text-white font-medium text-lg group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 group-hover:bg-clip-text transition-all duration-300">
-                    {activity.action}
-                  </p>
-                  <p className="text-slate-400 text-sm mt-1">
-                    {new Date(activity.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
+                  <div className="h-4 bg-slate-600/50 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-slate-600/50 rounded w-1/2"></div>
                 </div>
-
-                <span
-                  className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 group-hover:scale-105 ${
-                    activity.status === "completed"
-                      ? "bg-green-500/20 text-green-400 group-hover:bg-green-500/30"
-                      : "bg-yellow-500/20 text-yellow-400 group-hover:bg-yellow-500/30"
-                  }`}
-                >
-                  {activity.status.charAt(0).toUpperCase() +
-                    activity.status.slice(1)}
-                </span>
+                <div className="px-4 py-2 bg-slate-600/50 rounded-xl">
+                  <div className="h-3 w-16 bg-slate-500 rounded"></div>
+                </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {sortedActivity.length === 0 && (
+        {/* Activity List */}
+        {!isLoading && (
+          <div className="space-y-4">
+            {sortedActivity.map((activity, index) => {
+              const IconComponent = getActivityIcon(activity.status);
+
+              return (
+                <div
+                  key={`${activity.serviceType}-${activity.date}-${index}`}
+                  className={`group flex items-center space-x-4 p-6 bg-slate-700/30 backdrop-blur-sm rounded-2xl border border-slate-600/30 hover:border-slate-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20 ${
+                    isLoaded
+                      ? "opacity-100 translate-x-0"
+                      : "opacity-0 translate-x-4"
+                  }`}
+                  style={{
+                    transitionDelay: `${index * 100}ms`,
+                  }}
+                >
+                  <div
+                    className={`p-3 rounded-xl transition-all duration-300 group-hover:scale-110 ${
+                      activity.status === "completed"
+                        ? "bg-green-500/20 group-hover:bg-green-500/30"
+                        : "bg-yellow-500/20 group-hover:bg-yellow-500/30"
+                    }`}
+                  >
+                    <IconComponent
+                      className={`w-5 h-5 ${
+                        activity.status === "completed"
+                          ? "text-green-400"
+                          : "text-yellow-400"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <p className="text-white font-medium text-lg group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-slate-300 group-hover:bg-clip-text transition-all duration-300">
+                      {activity.action}
+                    </p>
+                    <p className="text-slate-400 text-sm mt-1">
+                      {new Date(activity.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 group-hover:scale-105 ${
+                      activity.status === "completed"
+                        ? "bg-green-500/20 text-green-400 group-hover:bg-green-500/30"
+                        : "bg-yellow-500/20 text-yellow-400 group-hover:bg-yellow-500/30"
+                    }`}
+                  >
+                    {activity.status
+                      ? activity.status.charAt(0).toUpperCase() +
+                        activity.status.slice(1)
+                      : "Pending"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && sortedActivity.length === 0 && (
           <div className="text-center py-12">
             <div className="p-4 bg-slate-700/30 rounded-2xl inline-block mb-4">
               <Clock className="w-12 h-12 text-slate-400" />
@@ -202,19 +227,6 @@ export default function RecentActivity() {
           </div>
         )}
       </div>
-
-      <style jsx>{`
-        @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }

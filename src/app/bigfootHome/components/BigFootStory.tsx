@@ -10,7 +10,7 @@ export default function BigFootStory() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 mb-6">
-              BigFoot Window & Gutter Cleaning
+              Bigfoot Window & Gutter Cleaning
             </h1>
             <p className="text-2xl text-slate-300 font-semibold">
               Veteran-Owned • Seattle Area • Professional Service

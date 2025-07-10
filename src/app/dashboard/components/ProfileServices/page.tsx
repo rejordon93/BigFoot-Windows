@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, Clock, CheckCircle, Star, Activity } from "lucide-react";
 import axios from "axios";
 import RecentActivity from "../RecentActivity/page";
+import { QuoteType } from "../../../../type";
 
 type createdAtType = {
   createdAt: string;
@@ -9,6 +10,7 @@ type createdAtType = {
 
 export default function ProfileServices() {
   const [memberSince, setMemberSince] = useState<createdAtType>();
+  const [quote, setQuote] = useState<QuoteType[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -22,6 +24,20 @@ export default function ProfileServices() {
       }
     };
     getUserData();
+  }, []);
+
+  useEffect(() => {
+    const getQuoteData = async () => {
+      try {
+        const res = await axios.get("/api/quote/get");
+        setQuote(res.data);
+        console.log(res.data);
+        setIsLoaded(true);
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+      }
+    };
+    getQuoteData();
   }, []);
 
   const cards = [
@@ -53,7 +69,7 @@ export default function ProfileServices() {
       hoverBorder: "hover:border-purple-500/40",
       title: "Upcoming",
       subtitle: "Services scheduled",
-      value: "2",
+      value: quote.length || "0",
       gradient: "from-purple-500/10 to-purple-600/10",
     },
     {
