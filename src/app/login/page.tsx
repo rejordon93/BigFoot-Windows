@@ -249,19 +249,6 @@ export default function Login() {
               Sign up
             </motion.a>
           </motion.p>
-          <motion.p
-            className="text-center text-white/70 mt-6 text-sm"
-            variants={itemVariants}
-          >
-            Employee?{" "}
-            <motion.a
-              href="/employeeSignUp"
-              className="text-cyan-300 hover:text-cyan-200 font-semibold transition-colors"
-              whileHover={{ scale: 1.05 }}
-            >
-              Employee login
-            </motion.a>
-          </motion.p>
 
           {/* Forgot Password */}
           <motion.div className="text-center mt-4" variants={itemVariants}>

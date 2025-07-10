@@ -2,23 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/database/prisma";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { LoginProps } from "@/type";
+import { loginSchema } from "@/schemas/auth"; // <-- ✅ new import
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password }: LoginProps = body;
-    if (!email || !password) {
-      return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400 }
-      );
+
+    // ✅ Validate with Zod
+    const parsed = loginSchema.safeParse(body);
+    if (!parsed.success) {
+      const formatted = parsed.error.format();
+      return NextResponse.json({ errors: formatted }, { status: 400 });
     }
 
-    const normalizedEmial = email.toLowerCase();
+    const { email, password } = parsed.data;
+    const normalizedEmail = email.toLowerCase();
 
     const user = await prisma.user.findUnique({
-      where: { email: normalizedEmial },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -27,34 +28,31 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    // set is onlint to true when login
+
+    // ✅ Set isOnline to true
     await prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        isOnline: true,
-      },
+      where: { email: normalizedEmail },
+      data: { isOnline: true },
     });
 
-    // check if validPassword
+    // ✅ Validate password
     const validPassword = await bcryptjs.compare(password, user.password);
     if (!validPassword) {
       return NextResponse.json({ error: "Invalid password" }, { status: 400 });
     }
+
     if (!process.env.TOKEN_SECRET) {
       throw new Error("TOKEN_SECRET is not defined");
     }
 
-    // if validPassword make a token!
+    // ✅ Create JWT token
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.TOKEN_SECRET,
-
       { expiresIn: "1d" }
     );
 
-    // send response!
+    // ✅ Set cookie
     const response = NextResponse.json({
       message: "Login successful",
       username: user.username,
@@ -62,11 +60,10 @@ export async function POST(req: NextRequest) {
       token,
     });
 
-    // set token data
     response.cookies.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24, // 1 day
       path: "/",
     });
 

@@ -19,6 +19,12 @@ const quoteSchema = z.object({
 
 type QuoteFormData = z.infer<typeof quoteSchema>;
 
+interface ToastMessage {
+  id: string;
+  type: "success" | "error";
+  message: string;
+}
+
 export default function BigFootHome() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,6 +36,22 @@ export default function BigFootHome() {
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [errors, setErrors] = useState<Partial<QuoteFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toastMessages, setToastMessages] = useState<ToastMessage[]>([]);
+
+  const addToast = (type: "success" | "error", message: string) => {
+    const id = Date.now().toString();
+    const newToast: ToastMessage = { id, type, message };
+    setToastMessages((prev) => [...prev, newToast]);
+
+    // Auto-remove toast after 5 seconds
+    setTimeout(() => {
+      setToastMessages((prev) => prev.filter((toast) => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: string) => {
+    setToastMessages((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -67,7 +89,10 @@ export default function BigFootHome() {
       setPreferredDate("");
       setAdditionalDetails("");
 
-      alert("Quote request submitted successfully!");
+      addToast(
+        "success",
+        "Quote request submitted successfully! We'll get back to you soon."
+      );
     } catch (error) {
       if (error instanceof z.ZodError) {
         // Handle validation errors
@@ -78,6 +103,12 @@ export default function BigFootHome() {
           }
         });
         setErrors(fieldErrors);
+        addToast(
+          "error",
+          "Please correct the errors in the form and try again."
+        );
+      } else {
+        addToast("error", "Something went wrong. Please try again later.");
       }
     } finally {
       setIsSubmitting(false);
@@ -86,6 +117,82 @@ export default function BigFootHome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-3">
+        {toastMessages.map((toast) => (
+          <div
+            key={toast.id}
+            className={`
+              max-w-sm w-full px-4 py-3 rounded-lg shadow-2xl 
+              transform transition-all duration-500 ease-out
+              animate-in slide-in-from-right-full
+              ${
+                toast.type === "success"
+                  ? "bg-green-600 border-l-4 border-green-400"
+                  : "bg-red-600 border-l-4 border-red-400"
+              }
+            `}
+          >
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {toast.type === "success" ? (
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-white leading-5">
+                  {toast.message}
+                </p>
+              </div>
+              <div className="ml-4 flex-shrink-0 flex">
+                <button
+                  onClick={() => removeToast(toast.id)}
+                  className="inline-flex text-white/70 hover:text-white focus:outline-none focus:text-white transition-colors duration-200"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <BigFootStory />
       <EmployeesCards />
       <div id="quotes" className="max-w-4xl mx-auto px-4 py-12 scroll-mt-24">

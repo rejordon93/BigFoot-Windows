@@ -29,10 +29,6 @@ model User {
 
   profile     Profile?
   quotes      Quote[]
-
-  // One-to-one relation with Employee
-  // employee    Employee? @relation(fields: [employeeId], references: [id])
-  // employeeId  Int?      @unique
 }
 
 model Profile {
@@ -45,32 +41,7 @@ model Profile {
   phone     String
   userId    Int                  @unique
   user      User                 @relation(fields: [userId], references: [id])
-
-  services  ProfileServices[]    // One-to-many relation
-  activities ProfileActivity[] // One-to-many relation
 }
-
-model ProfileServices {
-  id             Int      @id @default(autoincrement())
-  totalServices  Int      @default(0)
-  rating         Int      @default(0)
-  upcoming       Int      @default(0)
-  status         String   @default("Active")
-
-  profileId      Int
-  profile        Profile  @relation(fields: [profileId], references: [id])
-}
-
-model ProfileActivity {
-  id              Int            @id @default(autoincrement())
-  services        String
-  recentActivity  RecentActivity
-
-  profileId       Int
-  profile         Profile        @relation(fields: [profileId], references: [id])
-}
-
-
 
 model Guest {
   id        Int      @id @default(autoincrement())

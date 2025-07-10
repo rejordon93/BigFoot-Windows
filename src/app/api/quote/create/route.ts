@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/database/prisma";
-import { QuoteType } from "@/type";
 import { getToken } from "@/helpers/getToken";
+import { quoteSchema } from "@/schemas/quote";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    const parsed = quoteSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { errors: parsed.error.format() },
+        { status: 400 }
+      );
+    }
+
     const {
       fullName,
       email,
@@ -15,32 +24,19 @@ export async function POST(req: NextRequest) {
       serviceType,
       preferredDate,
       additionalDetails,
-    }: QuoteType = body;
-
-    // Validate required fields
-    if (
-      !fullName ||
-      !email ||
-      !phone ||
-      !address ||
-      !zip ||
-      !serviceType ||
-      !preferredDate
-    ) {
-      return NextResponse.json(
-        { message: "Missing data from form" },
-        { status: 400 }
-      );
-    }
-
-    const tokenData = await getToken(req);
+    } = parsed.data;
 
     let userId = null;
     let guestId = null;
 
-    if (tokenData) {
+    try {
+      const tokenData = await getToken(req);
       userId = tokenData;
-    } else {
+    } catch (e: unknown) {
+      console.error("No token found, continuing as guest.");
+    }
+
+    if (!userId) {
       const existingGuest = await prisma.guest.findUnique({ where: { email } });
 
       if (existingGuest) {
