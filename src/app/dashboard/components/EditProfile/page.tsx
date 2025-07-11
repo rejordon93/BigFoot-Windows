@@ -99,7 +99,8 @@ export default function EditProfile() {
     try {
       profileSchema.shape[field].parse(value);
       setValidationErrors((prev) => {
-        const { [field]: _, ...rest } = prev;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [field]: unused, ...rest } = prev;
         return rest;
       });
     } catch (error) {

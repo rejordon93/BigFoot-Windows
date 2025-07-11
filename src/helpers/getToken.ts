@@ -17,9 +17,13 @@ export const getToken = (request: NextRequest) => {
     ) as tokenProps;
 
     return decodedToken.id;
-  } catch (error: any) {
-    // Handle errors
-    console.error("Token verification failed:", error.message);
-    throw new Error("Invalid token");
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Token verification failed:", error.message);
+      throw new Error("Invalid token");
+    } else {
+      console.error("Unknown error during token verification.");
+      throw new Error("Invalid token");
+    }
   }
 };
