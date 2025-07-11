@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       const tokenData = await getToken(req);
       userId = tokenData;
     } catch (e: unknown) {
-      console.error("No token found, continuing as guest.");
+      console.error("No token found, continuing as guest.", e);
     }
 
     if (!userId) {
