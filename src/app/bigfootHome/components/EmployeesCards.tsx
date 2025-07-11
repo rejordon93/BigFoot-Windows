@@ -53,11 +53,12 @@ export default function EmployeesCards() {
                 seamlessly from start to finish.
               </p>
               <p>
-                When he's not expertly scaling buildings to clean hard-to-reach
-                windows, Chris is fine-tuning our equipment and refining
-                training protocols to keep the team at peak performance. His
-                motto: "Leave no streak behind."
+                When he&apos;s not expertly scaling buildings to clean
+                hard-to-reach windows, Chris is fine-tuning our equipment and
+                refining training protocols to keep the team at peak
+                performance. His motto: &quot;Leave no streak behind.&quot;
               </p>
+
               <p>
                 Drawing on the discipline and precision he gained in the
                 service, Chris approaches every gutter cleaning and window
