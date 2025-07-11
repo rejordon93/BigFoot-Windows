@@ -1,10 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Bigfoot Window and Gutters
+This is a Next.js project bootstrapped with create-next-app.
 
-## Getting Started
+🚀 Getting Started
+To start developing locally, run the development server with one of the following commands:
 
-First, run the development server:
-
-```bash
+bash
+Copy
+Edit
 npm run dev
 # or
 yarn dev
@@ -12,25 +14,40 @@ yarn dev
 pnpm dev
 # or
 bun dev
-```
+Then open your browser and navigate to http://localhost:3000 to see your app in action.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can begin editing by modifying app/page.tsx. Changes will auto-refresh your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🌐 Live Demo
+Check out the live, deployed version of this project here:
+https://bigfoot-cleaning.up.railway.app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+✨ Features
+Built with Next.js 15 and React 19
 
-## Learn More
+Optimized font loading with next/font, using Geist font family
 
-To learn more about Next.js, take a look at the following resources:
+Modern UI animations using Framer Motion
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+API routes for user authentication, profile management, and more
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Responsive and accessible design with Tailwind CSS
 
-## Deploy on Vercel
+📚 Learn More
+Explore these resources to deepen your Next.js knowledge:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Next.js Documentation — Comprehensive docs and API references
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Learn Next.js — Interactive tutorials for all skill levels
+
+Next.js GitHub Repository — Contribute or report issues
+
+🚀 Deployment
+This app is deployed and hosted on Railway. You can visit the production site here:
+https://bigfoot-cleaning.up.railway.app
+
+For easy deployment on Vercel, check out the official docs:
+Next.js Deployment Documentation
+
+Or deploy instantly via Vercel.
+
