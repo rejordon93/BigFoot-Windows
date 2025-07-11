@@ -33,8 +33,6 @@ export default function Login() {
       });
       const token = res.data.token; // ✅ Get token from response
       const decoded = jwtDecode<DecodedToken>(token);
-
-      console.log(token);
       // Simulate delay and success message
       setTimeout(() => {
         setMessage("✅ Login successful! Redirecting...");

@@ -46,21 +46,23 @@ export default function EmployeesCards() {
 
             <div className="space-y-4 text-slate-300">
               <p>
-                Chris is the mastermind behind our operations and the guy who
-                first had the BigFoot vision. With his military background in
-                logistics and keen eye for detail, he ensures every job runs
-                like a well-oiled machine.
+                Chris is the visionary behind BigFoot Cleaning Co.—the one who
+                first saw the potential to turn a simple idea into a thriving
+                business. With a strong military background in logistics and an
+                exceptional eye for detail, he ensures every project runs
+                seamlessly from start to finish.
               </p>
               <p>
-                When he&apos;s not scaling buildings to clean hard-to-reach
-                windows, Chris can be found perfecting our equipment setup and
-                training protocols. His motto: &quot;Leave no streak
-                behind.&quot;
+                When he's not expertly scaling buildings to clean hard-to-reach
+                windows, Chris is fine-tuning our equipment and refining
+                training protocols to keep the team at peak performance. His
+                motto: "Leave no streak behind."
               </p>
               <p>
-                Chris brings the same precision he learned in the service to
-                every gutter cleaning and window washing job. He&apos;s the
-                steady hand that keeps BigFoot Cleaning Co. moving forward.
+                Drawing on the discipline and precision he gained in the
+                service, Chris approaches every gutter cleaning and window
+                washing job with unmatched care. He’s the calm force that keeps
+                BigFoot Cleaning Co. on track and always aiming higher.
               </p>
             </div>
 
@@ -101,21 +103,23 @@ export default function EmployeesCards() {
 
             <div className="space-y-4 text-slate-300">
               <p>
-                Ethan handles the customer-facing side of BigFoot Cleaning Co.
-                and is passionate about building lasting relationships with
-                every client. His military communication skills and natural
-                leadership make him the perfect face for our growing business.
+                Ethan is the heart of BigFoot Cleaning Co.’s customer
+                experience. With a passion for connecting with people and a
+                mission to build lasting client relationships, he ensures every
+                customer feels valued and heard. His background in military
+                communications and natural leadership make him the ideal
+                representative of our brand.
               </p>
               <p>
-                Whether he&apos;s providing quotes, coordinating schedules, or
-                personally ensuring customer satisfaction, Ethan treats every
-                interaction like it&apos;s the most important mission of the
-                day.
+                From providing detailed quotes and coordinating schedules to
+                following up on every job, Ethan treats each interaction like a
+                top-priority mission. His dedication to service and
+                professionalism shines through in every conversation.
               </p>
               <p>
-                His commitment to excellence and genuine care for the Seattle
-                community has helped BigFoot Cleaning Co. build its legendary
-                reputation one satisfied customer at a time.
+                Ethan’s commitment to excellence and deep care for the Seattle
+                community have played a vital role in building BigFoot Cleaning
+                Co.’s trusted reputation—one satisfied customer at a time.
               </p>
             </div>
 

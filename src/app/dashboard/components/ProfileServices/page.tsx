@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Calendar, Clock, CheckCircle, Star, Activity } from "lucide-react";
 import axios from "axios";

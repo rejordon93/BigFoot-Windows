@@ -42,8 +42,8 @@ export default function BigFootStory() {
 
               <div className="mt-8 p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
                 <p className="text-amber-300 font-semibold text-center">
-                  &aposFrom service members to service providers – because
-                  excellence never goes out of style.&apos
+                  From service members to service providers because excellence
+                  never goes out of style
                 </p>
                 <p className="text-slate-400 text-center mt-2">
                   - Ethan & Chris, Founders
