@@ -1,19 +1,17 @@
-Bigfoot Window and Gutters
+# Bigfoot Window and Gutters
 This is a Next.js project bootstrapped with create-next-app.
 
 🚀 Getting Started
 To start developing locally, run the development server with one of the following commands:
 
-bash
-Copy
-Edit
 npm run dev
-# or
+
 yarn dev
-# or
+
 pnpm dev
-# or
+
 bun dev
+
 Then open your browser and navigate to http://localhost:3000 to see your app in action.
 
 You can begin editing by modifying app/page.tsx. Changes will auto-refresh your browser.
